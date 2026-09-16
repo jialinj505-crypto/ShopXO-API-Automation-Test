@@ -1,0 +1,142 @@
+name: 接口自动化测试
+
+# 触发策略（面试常问"你的自动化怎么落地的"，这里就是答案）：
+# 1. push / PR         → 只跑离线框架自测（秒级、零网络依赖，不受别人沙箱影响），作为代码门禁；
+# 2. 定时（工作日凌晨）→ 跑真实环境冒烟回归，产出质量看板与历史归档；
+# 3. 手动触发         → 可选范围（marker）与是否跑真实环境。
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      marker:
+        description: '用例范围（pytest marker 表达式）'
+        required: false
+        default: 'smoke'
+  schedule:
+    # UTC 18:10 = 北京时间次日 02:10（避开整点高峰），工作日执行
+    - cron: '10 18 * * 0-4'
+
+# 同一分支重复触发时取消上一次未完成的运行，避免互相排队
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUNBUFFERED: '1'
+  PYTHONUTF8: '1'
+
+jobs:
+  # ------------------------------------------------------------------
+  # 1) 离线框架自测：PR 门禁，快、稳、不依赖外部环境
+  # ------------------------------------------------------------------
+  offline-framework-check:
+    name: 离线框架自测（PR 门禁 + 覆盖率）
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SHOPXO_OFFLINE: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: 安装依赖
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+      - name: 代码规范检查（ruff，仅提示不阻塞）
+        continue-on-error: true
+        run: |
+          pip install ruff
+          ruff check . --exit-zero
+
+      - name: 离线回归（框架自测 + 覆盖率门禁）
+        run: |
+          python -m pytest -m offline \
+            --cov=core --cov-report=term-missing --cov-report=xml \
+            # 覆盖率门禁：离线套件实测 core 覆盖率 80%（2026-09 基线），门槛留 2% 余量避免抖动误伤。
+          # 未达标的主要是 allure_utils.py(34%)、report_plugin.py(53%)、env_check.py 的真实探测分支(62%)，
+          # 它们依赖 allure CLI 与真实环境，离线 mock 套件覆盖不到，因此门槛不设 85。
+          --cov-fail-under=78 \
+            --run-tag CI-offline
+
+      - name: 上传看板与归档
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-report
+          if-no-files-found: warn
+          path: |
+            reports/dashboard.html
+            reports/summary.json
+            reports/history/
+            coverage.xml
+            logs/
+
+  # ------------------------------------------------------------------
+  # 2) 真实环境冒烟回归：定时 / 手动触发
+  # ------------------------------------------------------------------
+  sandbox-smoke:
+    name: 真实环境冒烟回归（定时 / 手动）
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: 安装依赖
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+      # 公开沙箱账号可能被他人改密或被重置：先预检。
+      # 不可用时给出 warning 并跳过，而不是把仓库变红——环境不可用不等于测试失败。
+      - name: 账号/环境预检
+        id: preflight
+        run: |
+          if python tools/check_login.py; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::公开沙箱账号不可用，跳过真实环境回归（这属于环境问题，不是测试失败）"
+          fi
+
+      - name: 冒烟回归
+        if: steps.preflight.outputs.available == 'true'
+        run: |
+          python run.py -m "${{ github.event.inputs.marker || 'smoke' }}" \
+            --tag "CI-smoke" --no-allure
+
+      - name: 上传质量看板与历史归档
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sandbox-smoke-report
+          if-no-files-found: warn
+          path: |
+            reports/dashboard.html
+            reports/summary.json
+            reports/history/
+            reports/report.html
+            reports/env_probe.json
+            logs/
+
+      - name: 构建摘要（把本次结果贴到 Actions 页面）
+        if: always()
+        run: |
+          if [ -f reports/summary.json ]; then
+            python tools/ci_summary.py >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "本次未执行真实环境回归（预检未通过或未触发），因此没有结果摘要。" >> "$GITHUB_STEP_SUMMARY"
+          fi
