@@ -1,0 +1,63 @@
+{
+  "module": "购物车",
+  "api": "POST /index.php?s=/api/cart/*",
+  "cases": [
+    {
+      "desc": "正向-加入购物车成功",
+      "group": "add",
+      "goods_id": 12,
+      "stock": 1,
+      "expected_code": 0,
+      "expected_msg": "加入成功"
+    },
+    {
+      "desc": "边界-购买数量为0被拦截",
+      "group": "add",
+      "goods_id": 12,
+      "stock": 0,
+      "expected_code": -1,
+      "expected_msg": "购买数量有误"
+    },
+    {
+      "desc": "边界-购买数量为负数被拦截",
+      "group": "add",
+      "goods_id": 12,
+      "stock": -1,
+      "expected_code": -1,
+      "expected_msg": "购买数量有误"
+    },
+    {
+      "desc": "异常-商品不存在无法加购",
+      "group": "add",
+      "goods_id": 99999999,
+      "stock": 1,
+      "expected_code": -2,
+      "expected_msg": "商品不存在或已删除"
+    },
+    {
+      "desc": "异常-缺少商品ID无法加购",
+      "group": "add",
+      "goods_id": null,
+      "stock": 1,
+      "expected_code": -1,
+      "expected_msg": "商品id有误"
+    },
+    {
+      "desc": "缺陷-加购数量超库存未被拦截(应拦截)",
+      "group": "add",
+      "goods_id": 12,
+      "stock": 999999,
+      "expected_code": "not_0",
+      "expected_msg": "购买数量超过商品库存",
+      "known_defect": "加购接口未校验库存上限：实测 stock=999999(远超库存) 仍返回 code=0 加入成功，库存防线只在下单(buy/add)时才生效，存在超卖与恶意占库存风险。缺陷单：BUG-CART-STOCK-001"
+    },
+    {
+      "desc": "边界-同一商品重复加购会累加数量而非新增记录",
+      "group": "add_repeat",
+      "goods_id": 12,
+      "stock": 1,
+      "expected_code": 0,
+      "expected_msg": "加入成功"
+    }
+  ]
+}

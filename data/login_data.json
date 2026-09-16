@@ -1,0 +1,99 @@
+{
+  "module": "用户登录",
+  "api": "POST /index.php?s=/api/user/login",
+  "note": "账号密码使用 ${USER}/${PWD} 占位符，实际值取自 config/setting.py 或环境变量 SHOPXO_USER/SHOPXO_PWD，沙箱改密码后无需修改本文件",
+  "cases": [
+    {
+      "desc": "正向-正确账号密码登录成功",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": "${PWD}",
+      "type": "username",
+      "expected_code": 0,
+      "expected_msg": "登录成功",
+      "expect_token": true,
+      "schema": "login_success"
+    },
+    {
+      "desc": "边界-密码首尾带空格仍可登录(未做trim去空格)",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": " ${PWD} ",
+      "type": "username",
+      "expected_code": 0,
+      "expected_msg": "登录成功",
+      "expect_token": true,
+      "note": "安全风险：密码未做 trim，前后空格被容错，已记录为优化建议"
+    },
+    {
+      "desc": "异常-密码错误",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": "wrong_pwd_123",
+      "type": "username",
+      "expected_code": -4,
+      "expected_msg": "密码错误"
+    },
+    {
+      "desc": "异常-账号不存在",
+      "group": "login",
+      "accounts": "not_exist_user_zzz",
+      "pwd": "123456",
+      "type": "username",
+      "expected_code": -3,
+      "expected_msg": "登录帐号不存在"
+    },
+    {
+      "desc": "边界-密码为空",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": "",
+      "type": "username",
+      "expected_code": -1,
+      "expected_msg": "密码格式 6~18 个字符之间"
+    },
+    {
+      "desc": "边界-账号为空",
+      "group": "login",
+      "accounts": "",
+      "pwd": "${PWD}",
+      "type": "username",
+      "expected_code": -1,
+      "expected_msg": "登录账号不能为空"
+    },
+    {
+      "desc": "异常-缺少登录类型type",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": "${PWD}",
+      "type": null,
+      "expected_code": -1,
+      "expected_msg": "登录类型有误"
+    },
+    {
+      "desc": "异常-登录类型为邮箱但账号不是邮箱格式",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": "${PWD}",
+      "type": "email",
+      "expected_code": -2,
+      "expected_msg": "电子邮箱格式错误"
+    },
+    {
+      "desc": "边界-密码超长(200字符)应被拒绝",
+      "group": "login",
+      "accounts": "${USER}",
+      "pwd": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "username",
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "安全-SQL注入式账号无法登录",
+      "group": "login",
+      "accounts": "huace_tester' or '1'='1",
+      "pwd": "x' or '1'='1",
+      "type": "username",
+      "expected_code": "not_0"
+    }
+  ]
+}

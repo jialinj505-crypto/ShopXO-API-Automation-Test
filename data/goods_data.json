@@ -1,0 +1,45 @@
+{
+  "module": "商品模块",
+  "api": "POST /index.php?s=/api/goods/*",
+  "cases": [
+    {
+      "desc": "正向-查询在售商品详情",
+      "group": "detail",
+      "goods_id": 12,
+      "expected_code": 0,
+      "expect_fields": ["id", "title", "price", "inventory", "images", "is_shelves", "goods_url"],
+      "schema": "goods_detail"
+    },
+    {
+      "desc": "异常-商品ID不存在",
+      "group": "detail",
+      "goods_id": 99999999,
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "异常-缺少商品ID",
+      "group": "detail",
+      "goods_id": null,
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "异常-商品ID为非法字符",
+      "group": "detail",
+      "goods_id": "abc",
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "正向-查询单规格商品规格详情",
+      "group": "specdetail",
+      "goods_id": 12,
+      "expected_code": 0
+    },
+    {
+      "desc": "异常-未选择规格时查询下一级规格被拦截",
+      "group": "spectype",
+      "goods_id": 12,
+      "expected_code": -1,
+      "expected_msg": "请选择规格"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "登录成功响应结构",
+  "type": "object",
+  "required": ["code", "msg", "data"],
+  "properties": {
+    "code": {"type": "integer"},
+    "msg": {"type": "string"},
+    "data": {
+      "type": "object",
+      "required": ["id", "username", "token", "user_name_view", "integral"],
+      "properties": {
+        "id": {"type": ["string", "integer"]},
+        "username": {"type": "string"},
+        "token": {"type": "string", "minLength": 8},
+        "user_name_view": {"type": "string"},
+        "integral": {"type": ["string", "integer"]},
+        "add_time": {"type": "string"}
+      }
+    }
+  }
+}

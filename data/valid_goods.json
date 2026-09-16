@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-09-11 15:47:15",
+  "source": "api/search/index",
+  "total": 8,
+  "goods": [
+    {
+      "id": "11",
+      "title": "夏季复古ins风格网红SP同款 短袖大圆领香槟色蕾丝绣花钉珠连衣裙",
+      "price": "160.00-258.00",
+      "inventory": "2666664",
+      "is_exist_many_spec": "1",
+      "brand_name": "阿迪达斯",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/11.html"
+    },
+    {
+      "id": "2",
+      "title": "苹果（Apple）iPhone 6 Plus (A1524)移动联通电信4G手机 金色 16G",
+      "price": "4500.00-6800.00",
+      "inventory": "7999992",
+      "is_exist_many_spec": "1",
+      "brand_name": "佳洁士",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/2.html"
+    },
+    {
+      "id": "12",
+      "title": "ZK星星绣花雪纺连衣裙中长款sukol裙少女心温柔超仙女chic裙子夏",
+      "price": "0.10-12000.00",
+      "inventory": "3555552",
+      "is_exist_many_spec": "1",
+      "brand_name": "佳洁士",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/12.html"
+    },
+    {
+      "id": "1",
+      "title": "MIUI/小米 小米手机4 小米4代 MI4智能4G手机包邮 黑色 D-LTE（4G）/TD-SCD",
+      "price": "2100.00",
+      "inventory": "888888",
+      "is_exist_many_spec": "0",
+      "brand_name": "强生",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/1.html"
+    },
+    {
+      "id": "6",
+      "title": "vivo X5MAX L 移动4G 八核超薄大屏5.5吋双卡手机vivoX5max",
+      "price": "2998.90",
+      "inventory": "888887",
+      "is_exist_many_spec": "0",
+      "brand_name": "强生",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/6.html"
+    },
+    {
+      "id": "9",
+      "title": "睡衣女长袖春秋季纯棉韩版女士大码薄款春夏季全棉家居服两件套装",
+      "price": "120.00-158.00",
+      "inventory": "7999992",
+      "is_exist_many_spec": "1",
+      "brand_name": "佳洁士",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/9.html"
+    },
+    {
+      "id": "7",
+      "title": "纽芝兰包包女士2018新款潮百搭韩版时尚单肩斜挎包少女小挎包链条",
+      "price": "168.00",
+      "inventory": "888888",
+      "is_exist_many_spec": "0",
+      "brand_name": "强生",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/7.html"
+    },
+    {
+      "id": "5",
+      "title": "Meizu/魅族 MX4 Pro移动版 八核大屏智能手机 黑色 16G",
+      "price": "2499.00",
+      "inventory": "888888",
+      "is_exist_many_spec": "0",
+      "brand_name": "佳洁士",
+      "goods_url": "http://shop-xo.hctestedu.com/index.php?s=/index/goods/index/id/5.html"
+    }
+  ]
+}

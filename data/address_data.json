@@ -1,0 +1,47 @@
+{
+  "module": "收货地址",
+  "api": "POST /index.php?s=/api/useraddress/*",
+  "cases": [
+    {
+      "desc": "异常-新增地址缺少联系电话",
+      "group": "save",
+      "name": "AutoTestInvalid",
+      "tel": null,
+      "address": "自动化测试-缺少电话",
+      "expected_code": -1,
+      "expected_msg": "联系电话不能为空"
+    },
+    {
+      "desc": "异常-新增地址缺少收货人",
+      "group": "save",
+      "name": null,
+      "tel": "13800138000",
+      "address": "自动化测试-缺少姓名",
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "缺陷-手机号格式非法未被校验(应拦截)",
+      "group": "save",
+      "name": "AutoTestInvalidTel",
+      "tel": "abc",
+      "address": "自动化测试-非法手机号",
+      "expected_code": -1,
+      "expected_msg": "联系电话有误",
+      "known_defect": "收货地址接口未校验手机号格式：实测 tel=abc 仍返回 code=0 新增成功(而留言接口同样字段会返回'联系电话有误')，字段校验不一致。缺陷单：BUG-ADDR-TEL-001"
+    },
+    {
+      "desc": "缺陷-查询不存在的地址ID未被拦截(应拦截)",
+      "group": "detail",
+      "address_id": 99999999,
+      "expected_code": "not_0",
+      "known_defect": "地址详情接口未做存在性校验：实测查询不存在的地址ID返回 code=0(不报错)，存在越权探测与信息泄露风险，建议补充存在性校验。缺陷单：BUG-ADDR-DETAIL-001"
+    },
+    {
+      "desc": "异常-删除不存在的地址",
+      "group": "delete",
+      "address_id": 99999999,
+      "expected_code": -100,
+      "expected_msg": "删除失败或资源不存在"
+    }
+  ]
+}

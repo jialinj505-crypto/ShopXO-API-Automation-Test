@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "商品详情响应结构",
+  "type": "object",
+  "required": ["code", "data"],
+  "properties": {
+    "code": {"type": "integer"},
+    "data": {
+      "type": "object",
+      "required": ["goods", "common_cart_total"],
+      "properties": {
+        "common_cart_total": {"type": ["string", "integer"]},
+        "goods": {
+          "type": "object",
+          "required": ["id", "title", "price", "inventory", "images", "is_shelves", "goods_url"],
+          "properties": {
+            "id": {"type": ["string", "integer"]},
+            "title": {"type": "string"},
+            "price": {"type": ["string", "number"]},
+            "inventory": {"type": ["string", "integer"]},
+            "images": {"type": ["string", "array"]},
+            "is_shelves": {"type": ["string", "integer"]},
+            "goods_url": {"type": "string"},
+            "is_favor": {"type": ["string", "integer", "boolean"]},
+            "specifications": {"type": ["object", "array"]}
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "module": "订单模块",
+  "api": "POST /index.php?s=/api/order/*",
+  "cases": [
+    {
+      "desc": "异常-确认订单时购物车ID不存在",
+      "group": "confirm",
+      "ids": "99999999",
+      "buy_type": "cart",
+      "expected_code": -1,
+      "expected_msg": "商品为空"
+    },
+    {
+      "desc": "异常-确认订单时缺少购物车ID",
+      "group": "confirm",
+      "ids": null,
+      "buy_type": "cart",
+      "expected_code": -1,
+      "expected_msg": "购物车id有误"
+    },
+    {
+      "desc": "异常-提交订单时支付方式非法",
+      "group": "submit_bad_payment",
+      "payment_id": 99999,
+      "expected_code": -1,
+      "expected_msg": "支付方式有误"
+    },
+    {
+      "desc": "异常-提交订单时商品不存在",
+      "group": "submit_bad_goods",
+      "ids": "99999999",
+      "payment_id": 3,
+      "expected_code": -1,
+      "expected_msg": "商品为空"
+    },
+    {
+      "desc": "异常-查询不存在的订单详情",
+      "group": "detail",
+      "order_id": 99999999,
+      "expected_code": -100,
+      "expected_msg": "数据不存在或已删除"
+    },
+    {
+      "desc": "异常-取消不存在的订单",
+      "group": "cancel",
+      "order_id": 99999999,
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "异常-删除不存在的订单",
+      "group": "delete",
+      "order_id": 99999999,
+      "expected_code": "not_0"
+    }
+  ]
+}

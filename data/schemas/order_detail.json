@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "订单详情响应结构",
+  "type": "object",
+  "required": ["code", "data"],
+  "properties": {
+    "code": {"type": "integer"},
+    "data": {
+      "type": "object",
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "object",
+          "required": ["id", "order_no", "status", "status_name", "pay_status", "total_price", "pay_price"],
+          "properties": {
+            "id": {"type": ["string", "integer"]},
+            "order_no": {"type": "string"},
+            "status": {"type": ["string", "integer"]},
+            "status_name": {"type": "string"},
+            "pay_status": {"type": ["string", "integer"]},
+            "total_price": {"type": ["string", "number"]},
+            "pay_price": {"type": ["string", "number"]},
+            "refund_price": {"type": ["string", "number"]},
+            "is_can_launch_aftersale": {"type": ["string", "integer", "boolean"]},
+            "items": {"type": "array"}
+          }
+        }
+      }
+    }
+  }
+}

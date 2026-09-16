@@ -1,0 +1,74 @@
+{
+  "module": "商品搜索",
+  "api": "POST /index.php?s=/api/search/index",
+  "cases": [
+    {
+      "desc": "正向-关键字iphone可搜索到商品",
+      "group": "search",
+      "wd": "iphone",
+      "page": 1,
+      "expected_code": 0,
+      "assert_keyword": true,
+      "expect_min_total": 1,
+      "schema": "search_page"
+    },
+    {
+      "desc": "正向-无关键字返回默认商品列表",
+      "group": "search",
+      "wd": null,
+      "page": 1,
+      "expected_code": 0,
+      "expect_min_total": 1,
+      "schema": "search_page"
+    },
+    {
+      "desc": "异常-不存在的关键字返回空结果",
+      "group": "search",
+      "wd": "zzz_not_exist_keyword_zzz",
+      "page": 1,
+      "expected_code": 0,
+      "expect_total_zero": true,
+      "expect_empty_page": true
+    },
+    {
+      "desc": "边界-超出范围的页码返回空列表",
+      "group": "search",
+      "wd": "iphone",
+      "page": 99999,
+      "expected_code": 0,
+      "expect_empty_page": true
+    },
+    {
+      "desc": "边界-分页第2页可正常返回",
+      "group": "search",
+      "wd": "",
+      "page": 2,
+      "expected_code": 0,
+      "schema": "search_page"
+    },
+    {
+      "desc": "边界-特殊字符(XSS脚本)关键字不报错",
+      "group": "search",
+      "wd": "<script>alert(1)</script>",
+      "page": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "边界-超长关键字(200字符)不报错",
+      "group": "search",
+      "wd": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "page": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "正向-按分类ID筛选商品",
+      "group": "search",
+      "wd": null,
+      "page": 1,
+      "category_ids": 1,
+      "expected_code": 0,
+      "schema": "search_page",
+      "note": "沙箱分类数据可能为空，只校验接口可用与结构正确"
+    }
+  ]
+}

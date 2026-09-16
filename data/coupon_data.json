@@ -1,0 +1,37 @@
+{
+  "module": "优惠券",
+  "api": "POST /index.php?s=/api/plugins/index (pluginsname=coupon)",
+  "enable_check": "需要环境安装优惠券插件(plugins_coupon)，未安装时相关用例自动跳过",
+  "cases": [
+    {
+      "desc": "正向-可领取优惠券列表返回成功",
+      "group": "list",
+      "page": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "边界-优惠券列表分页参数生效",
+      "group": "list",
+      "page": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "正向-领取优惠券成功",
+      "group": "receive",
+      "coupon_id": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "异常-领取不存在的优惠券被拦截",
+      "group": "receive",
+      "coupon_id": 99999999,
+      "expected_code": "not_0"
+    },
+    {
+      "desc": "正向-我的优惠券列表返回成功",
+      "group": "my",
+      "page": 1,
+      "expected_code": 0
+    }
+  ]
+}

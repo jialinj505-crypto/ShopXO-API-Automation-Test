@@ -1,0 +1,37 @@
+{
+  "module": "商家后台",
+  "api": "POST /admin.php?s=/admin/*",
+  "enable_check": "需要环境开放商家后台入口(admin.php)且后台账号可用，后台被禁用时相关用例自动跳过",
+  "cases": [
+    {
+      "desc": "正向-商家后台登录成功",
+      "group": "login",
+      "expected_code": 0
+    },
+    {
+      "desc": "正向-后台商品列表可查询",
+      "group": "goods",
+      "page": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "正向-后台订单列表可查询",
+      "group": "order",
+      "page": 1,
+      "status": "-1",
+      "expected_code": 0
+    },
+    {
+      "desc": "正向-后台优惠券列表可查询",
+      "group": "coupon",
+      "page": 1,
+      "expected_code": 0
+    },
+    {
+      "desc": "异常-后台登录密码错误被拦截",
+      "group": "login_negative",
+      "pwd": "wrong_admin_pwd_123",
+      "expected_code": "not_0"
+    }
+  ]
+}

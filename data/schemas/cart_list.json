@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "购物车列表响应结构",
+  "type": "object",
+  "required": ["code", "data"],
+  "properties": {
+    "code": {"type": "integer"},
+    "data": {
+      "type": "object",
+      "required": ["data", "common_cart_total"],
+      "properties": {
+        "common_cart_total": {"type": ["string", "integer"]},
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "goods_id", "title", "price", "stock", "inventory", "total_price"],
+            "properties": {
+              "id": {"type": ["string", "integer"]},
+              "goods_id": {"type": ["string", "integer"]},
+              "title": {"type": "string"},
+              "price": {"type": ["string", "number"]},
+              "stock": {"type": ["string", "integer"]},
+              "inventory": {"type": ["string", "integer"]},
+              "total_price": {"type": ["string", "number"]},
+              "is_error": {"type": ["string", "integer"]},
+              "is_invalid": {"type": ["string", "integer"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}

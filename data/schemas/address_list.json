@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "收货地址列表响应结构",
+  "type": "object",
+  "required": ["code", "data"],
+  "properties": {
+    "code": {"type": "integer"},
+    "data": {
+      "type": "object",
+      "required": ["data"],
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "tel", "address", "is_default"],
+            "properties": {
+              "id": {"type": ["string", "integer"]},
+              "name": {"type": "string"},
+              "tel": {"type": "string"},
+              "address": {"type": "string"},
+              "province": {"type": ["string", "integer"]},
+              "city": {"type": ["string", "integer"]},
+              "county": {"type": ["string", "integer"]},
+              "is_default": {"type": ["string", "integer"]},
+              "province_name": {"type": "string"},
+              "city_name": {"type": "string"},
+              "county_name": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
