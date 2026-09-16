@@ -1,0 +1,14 @@
+# ShopXO 电商平台 API 自动化测试 - 运行依赖（Python 3.10+）
+requests>=2.31.0
+pytest>=8.0.0
+pytest-html>=4.1.0
+pytest-xdist>=3.5.0
+pytest-rerunfailures>=13.0
+allure-pytest>=2.13.0
+jsonschema>=4.20.0
+
+# 框架自身的离线单元测试（mock HTTP，不依赖真实环境）
+responses>=0.25.0
+
+# 框架代码覆盖率（CI 门禁：core/ 覆盖率不达标则构建失败）
+pytest-cov>=5.0.0
