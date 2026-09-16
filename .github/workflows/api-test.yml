@@ -38,9 +38,9 @@ jobs:
     env:
       SHOPXO_OFFLINE: '1'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.11'
           cache: pip
@@ -68,7 +68,7 @@ jobs:
 
       - name: 上传看板与归档
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: offline-report
           if-no-files-found: warn
@@ -88,9 +88,9 @@ jobs:
     timeout-minutes: 20
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.11'
           cache: pip
@@ -120,7 +120,7 @@ jobs:
 
       - name: 上传质量看板与历史归档
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: sandbox-smoke-report
           if-no-files-found: warn
