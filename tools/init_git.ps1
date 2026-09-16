@@ -86,7 +86,7 @@ Commit-Chunk 'feat(api): 接口对象层（登录/商品/搜索/购物车/订单
     'api_objects'
 )
 
-Commit-Chunk 'test(api): 接口用例 111 条（正向/边界/异常/安全/E2E + 环境能力自适应跳过）' @(
+Commit-Chunk 'test(api): 接口用例 98 条（正向/边界/异常/安全/E2E + 环境能力自适应跳过）' @(
     'tests/conftest.py', 'tests/test_login.py', 'tests/test_user_center.py', 'tests/test_search.py',
     'tests/test_goods.py', 'tests/test_cart.py', 'tests/test_address.py', 'tests/test_order.py',
     'tests/test_order_e2e.py', 'tests/test_coupon.py', 'tests/test_merchant.py'
@@ -94,6 +94,10 @@ Commit-Chunk 'test(api): 接口用例 111 条（正向/边界/异常/安全/E2E 
 
 Commit-Chunk 'feat(report): 结果归档插件与质量看板（历史不覆盖、趋势/缺陷看板/对比/flaky）' @(
     'core/report_plugin.py', 'core/dashboard.py', 'tests/test_report_tools.py'
+)
+
+Commit-Chunk 'feat(cli): 统一执行入口 run.py（标签/离线/覆盖率/历史裁剪等参数透传 + 执行结束打印质量看板路径）' @(
+    'run.py'
 )
 
 Commit-Chunk 'test(unit): 框架离线自测（mock HTTP，0 网络依赖，支撑 PR 门禁与覆盖率门禁）' @(

@@ -30,6 +30,9 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# ---- 本地参考材料（课程讲义、接口文档 PDF 等，不入库）----
+*.pdf
+
 # 说明：
 # 1. reports/ 下的历史归档、pytest-html、allure 原始结果都是可再生产物，不入库；
 # 2. 例外保留 reports/dashboard.html——它是自包含单文件看板，入库后别人 clone 下来
