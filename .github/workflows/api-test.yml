@@ -56,14 +56,14 @@ jobs:
           pip install ruff
           ruff check . --exit-zero
 
+      # 覆盖率门禁：离线套件实测 core 覆盖率 80%（2026-09 基线），门槛留 2% 余量避免抖动误伤。
+      # 未达标的主要是 allure_utils.py(34%)、report_plugin.py(53%)、env_check.py 的真实探测分支(62%)，
+      # 它们依赖 allure CLI 与真实环境，离线 mock 套件覆盖不到，因此门槛不设 85。
       - name: 离线回归（框架自测 + 覆盖率门禁）
         run: |
           python -m pytest -m offline \
             --cov=core --cov-report=term-missing --cov-report=xml \
-            # 覆盖率门禁：离线套件实测 core 覆盖率 80%（2026-09 基线），门槛留 2% 余量避免抖动误伤。
-          # 未达标的主要是 allure_utils.py(34%)、report_plugin.py(53%)、env_check.py 的真实探测分支(62%)，
-          # 它们依赖 allure CLI 与真实环境，离线 mock 套件覆盖不到，因此门槛不设 85。
-          --cov-fail-under=78 \
+            --cov-fail-under=78 \
             --run-tag CI-offline
 
       - name: 上传看板与归档
