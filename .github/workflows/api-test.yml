@@ -112,11 +112,17 @@ jobs:
             echo "::warning::公开沙箱账号不可用，跳过真实环境回归（这属于环境问题，不是测试失败）"
           fi
 
-      - name: 冒烟回归
+      # Allure HTML 报告：runner 自带 Java，用仓库里的安装脚本把 CLI 放到项目内 .tools/（run.py 自动识别）。
+      # 只在确实要跑回归时安装，避免预检不通过还白下载 30MB。
+      - name: 安装 Allure 命令行（生成 HTML 报告用，可选增强）
+        if: steps.preflight.outputs.available == 'true'
+        run: python tools/get_allure.py --version 2.46.1
+
+      - name: 冒烟回归（含 Allure HTML 报告）
         if: steps.preflight.outputs.available == 'true'
         run: |
           python run.py -m "${{ github.event.inputs.marker || 'smoke' }}" \
-            --tag "CI-smoke" --no-allure
+            --tag "CI-smoke" --allure-report
 
       - name: 上传质量看板与历史归档
         if: always()
@@ -129,6 +135,7 @@ jobs:
             reports/summary.json
             reports/history/
             reports/report.html
+            reports/allure-report/
             reports/env_probe.json
             logs/
 
