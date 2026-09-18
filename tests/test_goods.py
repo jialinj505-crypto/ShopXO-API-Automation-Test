@@ -82,10 +82,12 @@ def test_goods_favor_toggle(goods_api, token):
 
 
 def _parse_spec(goods_api, goods_id):
-    """解析多规格商品的规格结构，返回 (商品信息, 规格类型名, 第一个可用规格值)。
+    """解析多规格商品的规格结构，返回 (商品信息, 完整规格组合)。
 
-    ShopXO 的规格结构为：{"choose": [{"name": "尺码", "value": [{"name": "M"}, ...]}]}，
-    查询规格价格/库存时需要按 [{"type": 规格名, "value": 规格值}] 组合传参。
+    ShopXO 的规格结构为：{"choose": [{"name": "颜色", "value": [...]}, {"name": "尺码", "value": [...]}]}。
+    查询规格价格/库存时必须给出**每一个规格维度**的取值：只传第一个维度会返回
+    code=-100「没有相关规格」（实测商品 id=12 这类多维规格商品即如此），
+    因此这里对每个维度取第一个可用值，拼成 [{"type": 维度名, "value": 取值}] 的完整组合。
     """
     detail = goods_api.detail(goods_id)
     Assert.success(detail, "商品详情")
@@ -100,14 +102,16 @@ def _parse_spec(goods_api, goods_id):
     if not spec_defs:
         pytest.skip("商品详情未返回规格明细(specifications)，无法构造规格组合")
 
-    first = spec_defs[0]
-    type_name = first.get("name") or first.get("title") or first.get("type")
-    values = first.get("value") or first.get("values") or []
-    if not (type_name and values):
-        pytest.skip("规格结构无法解析，跳过（不同版本 ShopXO 规格字段不一致）")
-    value_item = values[0]
-    value_name = (value_item.get("name") or value_item.get("value")) if isinstance(value_item, dict) else value_item
-    return goods, type_name, value_name
+    combination = []
+    for dimension in spec_defs:
+        type_name = dimension.get("name") or dimension.get("title") or dimension.get("type")
+        values = dimension.get("value") or dimension.get("values") or []
+        if not (type_name and values):
+            pytest.skip("规格结构无法解析，跳过（不同版本 ShopXO 规格字段不一致）")
+        value_item = values[0]
+        value_name = (value_item.get("name") or value_item.get("value")) if isinstance(value_item, dict) else value_item
+        combination.append({"type": type_name, "value": value_name})
+    return goods, combination
 
 
 @pytest.mark.positive
@@ -115,8 +119,7 @@ def test_multi_spec_goods_spec_detail(goods_api, spec_goods):
     """多规格商品：按规格组合查询规格详情，返回的价格必须落在商品价格区间内。"""
     goods_id = spec_goods["id"]
     mark(feature="商品模块", story="多规格商品规格选择")
-    goods, type_name, value_name = _parse_spec(goods_api, goods_id)
-    spec = [{"type": type_name, "value": value_name}]
+    goods, spec = _parse_spec(goods_api, goods_id)
 
     with step(f"按规格查询规格详情 spec={spec}"):
         res = goods_api.spec_detail(goods_id, spec=spec)
@@ -136,8 +139,8 @@ def test_multi_spec_goods_spec_detail(goods_api, spec_goods):
 @pytest.mark.negative
 def test_spec_detail_invalid_value_rejected(goods_api, spec_goods):
     """异常场景：选择真实规格类型 + 不存在的规格值，应被拦截。"""
-    _, type_name, _ = _parse_spec(goods_api, spec_goods["id"])
-    res = goods_api.spec_detail(spec_goods["id"], spec=[{"type": type_name, "value": "不存在的规格值"}])
+    _, spec = _parse_spec(goods_api, spec_goods["id"])
+    res = goods_api.spec_detail(spec_goods["id"], spec=[{"type": spec[0]["type"], "value": "不存在的规格值"}])
     Assert.fail(res, "不存在的规格值")
     Assert.msg_contains(res, "规格")
 

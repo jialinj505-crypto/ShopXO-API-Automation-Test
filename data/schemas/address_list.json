@@ -22,7 +22,7 @@
               "province": {"type": ["string", "integer"]},
               "city": {"type": ["string", "integer"]},
               "county": {"type": ["string", "integer"]},
-              "is_default": {"type": ["string", "integer"]},
+              "is_default": {"type": ["string", "integer", "boolean"]},
               "province_name": {"type": "string"},
               "city_name": {"type": "string"},
               "county_name": {"type": "string"}
