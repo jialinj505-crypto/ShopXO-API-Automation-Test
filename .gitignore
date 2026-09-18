@@ -24,6 +24,9 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
+# ---- 项目内本地工具（如 Allure CLI：体积大、可随时重新下载，不入库）----
+.tools/
+
 # ---- IDE / OS ----
 .idea/
 .vscode/
