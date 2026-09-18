@@ -9,7 +9,7 @@
     python run.py --base-url http://127.0.0.1     # 指定被测环境
     python run.py --tag 发版前回归           # 给本次执行打标签（趋势图上可区分）
     python run.py --open                   # 执行结束后自动打开质量看板
-    python run.py --allure-report          # 额外生成 Allure HTML 报告（需安装 allure 命令行）
+    python run.py --allure-report          # 额外生成 Allure HTML 报告（CLI 放 .tools/ 或设 ALLURE_HOME）
 
 每次执行的结果都会按运行编号归档，**历史结果不会被覆盖**：
 
@@ -42,6 +42,24 @@ DASHBOARD = REPORT_DIR / "dashboard.html"
 def module_available(name: str) -> bool:
     """判断依赖是否安装（未安装的能力自动降级，不阻断用例执行）。"""
     return importlib.util.find_spec(name) is not None
+
+
+def find_allure() -> str:
+    """查找 allure 命令行：优先 ALLURE_HOME，其次项目内 .tools/allure-*/，最后系统 PATH。
+
+    Allure 是可选的报告增强，不必装进系统 PATH：把官方 allure-commandline 解压到 .tools/ 即可，
+    .tools/ 已被 .gitignore 忽略；别人没有它也能照常执行用例，只是不生成 Allure HTML。
+    """
+    exe = "allure.bat" if os.name == "nt" else "allure"
+    candidates = []
+    home = os.environ.get("ALLURE_HOME", "")
+    if home:
+        candidates.append(Path(home) / "bin" / exe)
+    candidates += [base / "bin" / exe for base in sorted((ROOT / ".tools").glob("allure-*"), reverse=True)]
+    for candidate in candidates:
+        if candidate.exists():
+            return str(candidate)
+    return shutil.which("allure") or ""
 
 
 def build_pytest_args(args, run_id: str) -> list:
@@ -154,9 +172,12 @@ def main() -> int:
     run_dir = archive_html_report(run_id)
 
     if args.allure_report:
-        allure_cli = shutil.which("allure")
+        allure_cli = find_allure()
         if not allure_cli:
-            print("[警告] 未找到 allure 命令行，跳过 HTML 报告生成（原始结果已保留在 reports/allure-results）")
+            print(
+                "[警告] 未找到 allure 命令行，跳过 HTML 报告生成（原始结果已保留在 reports/allure-results）\n"
+                "       获取方式：把 allure-commandline 解压到项目 .tools/ 目录，或设置环境变量 ALLURE_HOME"
+            )
         elif ALLURE_RESULTS.exists():
             subprocess.run([allure_cli, "generate", str(ALLURE_RESULTS), "-o", str(ALLURE_REPORT), "--clean"], cwd=str(ROOT))
 
