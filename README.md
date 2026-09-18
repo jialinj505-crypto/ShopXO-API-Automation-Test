@@ -204,6 +204,9 @@ python -m venv .venv
 - 每条请求输出：`POST api/cart/save -> code=0 msg=加入成功 (耗时65.9ms, 第1/1次)`
 - Allure 附件：**可复现的 curl 命令 + 完整响应体**，失败用例可直接复制 curl 复现
 - 失败自动分类：`reports/allure-results/categories.json` 把失败归为「产品缺陷 / 环境问题 / 用例问题」
+- **Allure HTML 报告**（可选增强）：`python tools/get_allure.py` 把官方 CLI 装到项目内 `.tools/`（不污染系统 PATH；未安装时框架自动降级，用例照常执行），
+  `python run.py --allure-report` 执行完自动渲染 `reports/allure-report/index.html`；CI 冒烟回归会把这份 HTML 作为 Artifact 上传
+- 口径提示：allure-pytest 把 pytest 的 `xfailed` 计入 `skipped`（pytest 报 12 skipped + 7 xfailed ＝ Allure 报 19 skipped + 0 failed，总数都是 284）
 
 ### 6. 环境能力探测与按需跳过 —— `core/env_check.py`
 
@@ -334,7 +337,7 @@ python run.py --base-url http://your-shopxo-host     # 换环境即生效
 | 任务 | 触发 | 内容 | 为什么这么设计 |
 | --- | --- | --- | --- |
 | 离线框架自测（PR 门禁） | push / PR | 装依赖 → `pytest -m offline` → `core/` 覆盖率门禁 → 上传看板与 `coverage.xml` | 秒级、0 网络依赖：**不受别人沙箱可用性影响**，PR 反馈快且稳定 |
-| 真实环境冒烟回归 | 工作日定时 / 手动 | 账号预检 → `run.py -m smoke` → 上传看板 + `history/` 归档 → 构建摘要写入 Actions 页面 | 环境不可用时只发 warning 并跳过，不把"环境问题"报成"测试失败" |
+| 真实环境冒烟回归 | 工作日定时 / 手动 | 账号预检 → 安装 Allure CLI（`tools/get_allure.py`）→ `run.py -m smoke --allure-report` → 上传看板 + `history/` 归档 + **Allure HTML 报告** → 构建摘要写入 Actions 页面 | 环境不可用时只发 warning 并跳过，不把"环境问题"报成"测试失败" |
 
 **2) Jenkins（`Jenkinsfile`，企业内常见形态）**
 
@@ -401,6 +404,7 @@ python run.py --base-url http://your-shopxo-host     # 换环境即生效
 | `tools/check_login.py` | 凭证预检：确认测试账号能否登录，用于区分「环境凭证失效」和「用例失败」（CI 前置卡点，异常退出码 1） |
 | `tools/check_goods_status.py` | 预检：测试数据引用的商品是否仍上架可售（CI 前置卡点，异常退出码 1） |
 | `tools/fetch_valid_goods.py` | 数据维护：调用真实搜索接口抓取在售商品，刷新 `data/valid_goods.json`，避免手工编造测试数据 |
+| `tools/get_allure.py` | 可选依赖安装：把官方 Allure CLI 装到项目内 `.tools/`（优先走 GitHub API 资产通道，适配受限网络；按 release 公布的 sha256 校验；装完自动 `allure --version` 自检 Java 环境）。用法：`python tools/get_allure.py`／`--version 2.46.1`／`--force`／`--check` |
 | `tools/ci_summary.py` | 把 `reports/summary.json` 渲染成 Markdown 构建摘要（GitHub Actions Step Summary / Jenkins 构建说明共用同一份实现） |
 | `tools/init_git.ps1` | 仓库初始化：检测 git（缺失时给出安装提示并不动作）→ 配置身份 → 按"配置/框架/接口层/用例/报告/单测/CI/工具/文档"分块提交，生成可回溯的规范提交历史。执行：`powershell -ExecutionPolicy Bypass -File tools\init_git.ps1` |
 
